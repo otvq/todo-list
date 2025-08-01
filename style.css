@@ -1,73 +1,86 @@
+/* --- 全局样式和 Kite 风格变量 --- */
+:root {
+    --primary-blue: #387ed1;
+    --primary-blue-darker: #316ab7;
+    --text-dark: #2c3e50;
+    --text-light: #5a6b7b;
+    --border-color: #e0e6ed;
+    --background-light: #f8f9fa;
+    --background-white: #ffffff;
+    --success-green: #27ae60;
+    --warning-orange: #f39c12;
+    --danger-red: #e74c3c;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.06);
+}
+
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    background-color: #f4f7f6;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    
+    /* --- 新增：背景图片设置 --- */
+    background-image: url('background-image.jpg');
+    background-size: cover; /* 让图片完全覆盖整个背景区域，可能会裁剪图片 */
+    background-position: center center; /* 将图片在视口中居中 */
+    background-repeat: no-repeat; /* 防止图片平铺重复 */
+    background-attachment: fixed; /* 这是关键，使背景图片固定，内容滚动时背景不动 */
+    
+    /* --- 保留一个备用背景色，以防图片加载失败 --- */
+    background-color: var(--background-light);
+    
     margin: 0;
-    padding: 20px;
+    padding: 40px 20px;
     display: flex;
     justify-content: center;
     align-items: flex-start;
     min-height: 100vh;
-    color: #333;
+    color: var(--text-dark);
 }
 
+/* --- 主容器卡片样式 (磨砂玻璃效果) --- */
 .container {
-    background-color: #ffffff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    /* 使用带透明度的白色作为背景 */
+    background-color: rgba(255, 255, 255, 0.85); 
+    
+    /* 关键：添加背景模糊滤镜，实现磨砂效果 */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* 兼容 Safari */
+
+    padding: 40px;
+    border-radius: 16px; /* 可以让圆角更明显一些 */
+    box-shadow: var(--shadow-md);
     width: 100%;
-    max-width: 600px;
+    max-width: 650px;
     text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.4); /* 使用半透明边框 */
 }
 
+/* --- 标题和头部 --- */
 h1 {
-    color: #2c3e50;
-}
-
-h2 {
-    color: #34495e;
-    border-bottom: 2px solid #ecf0f1;
-    padding-bottom: 10px;
-    margin-top: 20px;
-}
-
-input[type="text"] {
-    width: calc(100% - 22px);
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
+    font-weight: 700;
+    font-size: 28px;
     margin-bottom: 10px;
 }
 
-button {
-    background-color: #3498db;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
+h2 {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text-dark);
+    text-align: left;
+    margin: 40px 0 15px 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
 }
 
-button:hover {
-    background-color: #2980b9;
-}
-
-#logout-btn {
-    background-color: #e74c3c;
-}
-
-#logout-btn:hover {
-    background-color: #c0392b;
+p {
+    color: var(--text-light);
+    margin-bottom: 30px;
 }
 
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
 header h1 {
@@ -75,17 +88,65 @@ header h1 {
     font-size: 24px;
 }
 
+/* --- 表单元素（输入框和按钮） --- */
+input[type="text"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: #fafbfc;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(56, 126, 209, 0.2);
+}
+
 form {
     display: flex;
+    gap: 10px;
     margin-bottom: 20px;
 }
 
 form input {
     flex-grow: 1;
-    margin-right: 10px;
-    margin-bottom: 0;
 }
 
+button {
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover {
+    background-color: var(--primary-blue-darker);
+    transform: translateY(-1px);
+}
+
+#logout-btn {
+    background: none;
+    color: var(--text-light);
+    padding: 5px;
+    font-weight: normal;
+}
+
+#logout-btn:hover {
+    background: none;
+    color: var(--danger-red);
+    transform: none;
+}
+
+
+/* --- 任务列表样式 --- */
 .lists-container {
     text-align: left;
 }
@@ -96,38 +157,69 @@ ul {
 }
 
 li {
-    background-color: #ecf0f1;
+    background-color: var(--background-white);
     padding: 15px;
-    border-radius: 4px;
-    margin-bottom: 10px;
+    border-radius: 8px;
+    margin-bottom: 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     word-break: break-all;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s;
+}
+
+li:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: #c8d4e1;
 }
 
 li.completed {
+    opacity: 0.6;
+}
+
+li.completed span {
     text-decoration: line-through;
-    color: #95a5a6;
-    background-color: #f8f9f9;
+    color: var(--text-light);
+}
+
+/* --- 任务内的操作按钮 --- */
+li .actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 15px; /* 与文字隔开 */
 }
 
 li .actions button {
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 20px;
     padding: 5px;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+li .actions button:hover {
+    background-color: #f0f2f5;
+    transform: none;
 }
 
 li .actions .complete-btn {
-    color: #27ae60;
+    color: var(--success-green);
 }
 
 li.completed .actions .complete-btn {
-    color: #f39c12; /* "撤销"按钮颜色 */
+    color: var(--warning-orange);
 }
 
 li .actions .delete-btn {
-    color: #c0392b;
+    color: var(--danger-red);
 }
