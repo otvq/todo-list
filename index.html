@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="login-view" class="container">
+        <h1>欢迎使用 Todo List</h1>
+        <p>请输入您的用户名以继续</p>
+        <input type="text" id="username-input" placeholder="例如：wong">
+        <button id="login-btn">登录 / 开始使用</button>
+    </div>
+
+    <div id="app-view" class="container" style="display: none;">
+        <header>
+            <h1 id="welcome-message"></h1>
+            <button id="logout-btn">退出登录</button>
+        </header>
+        
+        <form id="add-todo-form">
+            <input type="text" id="todo-input" placeholder="需要做什么？" required>
+            <button type="submit">添加</button>
+        </form>
+
+        <div class="lists-container">
+            <div class="list">
+                <h2>待办事项</h2>
+                <ul id="todo-list">
+                    </ul>
+            </div>
+
+            <div class="list">
+                <h2>已完成</h2>
+                <ul id="completed-list">
+                    </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
