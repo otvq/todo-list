@@ -1,4 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // 时间格式化工具
+    function formatDateTime(isoStr) {
+        if (!isoStr) return '';
+        const date = new Date(isoStr);
+        const yyyy = date.getFullYear();
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        const hh = String(date.getHours()).padStart(2, '0');
+        const mi = String(date.getMinutes()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
+    }
+
     // 获取所有需要的DOM元素
     const loginView = document.getElementById('login-view');
     const appView = document.getElementById('app-view');
@@ -17,7 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 登录/登出逻辑 ---
 
-    // 页面加载时检查是否已经 "登录"
     function checkLoginStatus() {
         const username = localStorage.getItem('currentUser');
         if (username) {
@@ -61,14 +72,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // --- Todo 逻辑 ---
 
-    // 从 localStorage 加载指定用户的待办事项
     function loadTodos() {
         const userTodos = localStorage.getItem(`todos_${currentUser}`);
         todos = userTodos ? JSON.parse(userTodos) : [];
         renderTodos();
     }
 
-    // 将当前待办事项保存到 localStorage
     function saveTodos() {
         localStorage.setItem(`todos_${currentUser}`, JSON.stringify(todos));
     }
@@ -80,10 +89,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
         todos.forEach((todo, index) => {
             const li = document.createElement('li');
-            li.textContent = todo.text;
             if (todo.completed) {
                 li.classList.add('completed');
             }
+
+            // 添加主任务文本
+            const textSpan = document.createElement('span');
+            textSpan.textContent = todo.text;
+            li.appendChild(textSpan);
+
+            // 添加时间信息
+            const timeInfo = document.createElement('div');
+            timeInfo.className = 'time-info';
+            timeInfo.style.fontSize = '12px';
+            timeInfo.style.color = '#888';
+            timeInfo.style.marginTop = '6px';
+            timeInfo.style.textAlign = 'left';
+            const createdStr = `创建: ${formatDateTime(todo.createdAt)}`;
+            let completedStr = '';
+            if (todo.completed && todo.completedAt) {
+                completedStr = `，完成: ${formatDateTime(todo.completedAt)}`;
+            }
+            timeInfo.textContent = createdStr + completedStr;
+            li.appendChild(timeInfo);
 
             const actionsDiv = document.createElement('div');
             actionsDiv.classList.add('actions');
@@ -91,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // 完成/撤销按钮
             const completeBtn = document.createElement('button');
             completeBtn.classList.add('complete-btn');
-            completeBtn.innerHTML = todo.completed ? '&#x21A9;' : '&#x2714;'; // 撤销图标 vs 对号图标
+            completeBtn.innerHTML = todo.completed ? '&#x21A9;' : '&#x2714;';
             completeBtn.title = todo.completed ? '撤销' : '完成';
             completeBtn.onclick = () => toggleTodoStatus(index);
             
@@ -119,7 +147,12 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault(); // 阻止表单默认的提交行为
         const text = todoInput.value.trim();
         if (text) {
-            todos.push({ text: text, completed: false });
+            todos.push({
+                text: text,
+                completed: false,
+                createdAt: new Date().toISOString(),
+                completedAt: null
+            });
             saveTodos();
             renderTodos();
             todoInput.value = '';
@@ -128,14 +161,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 切换待办事项的状态（完成/待办）
     function toggleTodoStatus(index) {
-        todos[index].completed = !todos[index].completed;
+        const todo = todos[index];
+        todo.completed = !todo.completed;
+        if (todo.completed) {
+            todo.completedAt = new Date().toISOString();
+        } else {
+            todo.completedAt = null;
+        }
         saveTodos();
         renderTodos();
     }
 
     // 删除一个待办事项
     function deleteTodo(index) {
-        // 从数组中移除指定索引的元素
         todos.splice(index, 1);
         saveTodos();
         renderTodos();
