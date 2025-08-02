@@ -223,3 +223,11 @@ li.completed .actions .complete-btn {
 li .actions .delete-btn {
     color: var(--danger-red);
 }
+
+li .time-info {
+    display: block;
+    font-size: 12px;
+    color: #888;
+    margin-top: 6px;
+    text-align: left;
+}
