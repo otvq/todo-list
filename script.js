@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const appView = document.getElementById('app-view');
     const loginBtn = document.getElementById('login-btn');
     const usernameInput = document.getElementById('username-input');
+    const passwordInput = document.getElementById('password-input');
     const logoutBtn = document.getElementById('logout-btn');
     
     const welcomeMessage = document.getElementById('welcome-message');
@@ -39,14 +40,59 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // 哈希函数 - 简单加密密码
+    function hashPassword(password) {
+        // 这是一个简单的哈希实现，实际应用中应使用更安全的方法
+        return password.split('').reduce((acc, char) => {
+            let hash = ((acc << 5) - acc) + char.charCodeAt(0);
+            return hash & hash; // 转换为32位整数
+        }, 0).toString();
+    }
+
+    // 保存用户数据
+    function saveUser(username, passwordHash) {
+        const users = JSON.parse(localStorage.getItem('users')) || {};
+        users[username] = passwordHash;
+        localStorage.setItem('users', JSON.stringify(users));
+    }
+
+    // 验证用户密码
+    function validateUser(username, password) {
+        const users = JSON.parse(localStorage.getItem('users')) || {};
+        const storedHash = users[username];
+        if (!storedHash) return null; // 用户不存在
+        return storedHash === hashPassword(password);
+    }
+
     function handleLogin() {
         const username = usernameInput.value.trim();
-        if (username) {
+        const password = passwordInput.value.trim();
+
+        if (!username || !password) {
+            alert('请输入用户名和密码！');
+            return;
+        }
+
+        // 验证用户
+        const isValid = validateUser(username, password);
+
+        if (isValid === true) {
+            // 密码正确，登录
             currentUser = username;
             localStorage.setItem('currentUser', username);
             loadUserView();
+        } else if (isValid === null) {
+            // 用户不存在，创建新用户
+            const confirmCreate = confirm('该用户不存在，是否创建新用户？');
+            if (confirmCreate) {
+                saveUser(username, hashPassword(password));
+                currentUser = username;
+                localStorage.setItem('currentUser', username);
+                loadUserView();
+            }
         } else {
-            alert('请输入用户名！');
+            // 密码错误
+            alert('密码错误，请重试！');
         }
     }
 
@@ -186,4 +232,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 初始化 ---
     checkLoginStatus();
+
+    // 显示所有用户列表
+    function showAllUsers() {
+        // 只有在登录界面才显示用户列表
+        if (loginView.style.display !== 'block') {
+            alert('请先返回到登录界面，再使用alt+F9查看用户列表');
+            return;
+        }
+
+        const users = JSON.parse(localStorage.getItem('users')) || {};
+        const userList = Object.keys(users);
+
+        if (userList.length === 0) {
+            alert('暂无用户数据');
+            return;
+        }
+
+        let userListStr = '已注册用户列表：\n';
+        userList.forEach((username, index) => {
+            userListStr += `${index + 1}. ${username}\n`;
+        });
+
+        alert(userListStr);
+    }
+
+    // 添加快捷键事件监听
+    document.addEventListener('keydown', (event) => {
+        // 检查是否同时按下了alt和F9
+        if (event.altKey && event.key === 'F9') {
+            event.preventDefault(); // 阻止默认行为
+            showAllUsers();
+        }
+    });
 });
+
