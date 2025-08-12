@@ -89,7 +89,7 @@ header h1 {
 }
 
 /* --- 表单元素（输入框和按钮） --- */
-input[type="text"] {
+input[type="text"], input[type="password"] {
     width: 100%;
     padding: 12px 15px;
     border: 1px solid var(--border-color);
@@ -97,6 +97,7 @@ input[type="text"] {
     font-size: 16px;
     background-color: #fafbfc;
     transition: border-color 0.3s, box-shadow 0.3s;
+    margin-bottom: 15px;
 }
 
 input[type="text"]:focus {
