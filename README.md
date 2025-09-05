@@ -6,10 +6,7 @@
 
 **[查看在线演示 &raquo;](https://otvq.github.io/todo-list/)**
 
-*（请将上面的链接替换为你自己的 GitHub Pages 链接）*
-
-![应用截图](https://i.imgur.com/rS2XgW8.png)
-*(可选：你可以自己截一张图并替换上面的图片链接)*
+<img width="1338" height="531" alt="image" src="https://github.com/user-attachments/assets/1fb8e478-9146-4785-a791-bff378d5f6ba" />
 
 ---
 
