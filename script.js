@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 时间格式化工具
     function formatDateTime(isoStr) {
         if (!isoStr) return '';
         const date = new Date(isoStr);
@@ -11,7 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
     }
 
-    // 获取所有需要的DOM元素
     const loginView = document.getElementById('login-view');
     const appView = document.getElementById('app-view');
     const loginBtn = document.getElementById('login-btn');
@@ -25,11 +23,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const todoList = document.getElementById('todo-list');
     const completedList = document.getElementById('completed-list');
 
+    // 详情弹窗
+    const detailModal = document.getElementById('detail-modal');
+    const detailTextarea = document.getElementById('detail-textarea');
+    const saveDetailBtn = document.getElementById('save-detail-btn');
+    const closeDetailBtn = document.getElementById('close-detail-btn');
+
+    // 编辑弹窗
+    const editModal = document.getElementById('edit-modal');
+    const editInput = document.getElementById('edit-input');
+    const saveEditBtn = document.getElementById('save-edit-btn');
+    const closeEditBtn = document.getElementById('close-edit-btn');
+
+    let editingIndex = null;
+    let editingTitleIndex = null;
     let currentUser = null;
     let todos = [];
 
-    // --- 登录/登出逻辑 ---
-
+    // --- 登录逻辑 ---
     function checkLoginStatus() {
         const username = localStorage.getItem('currentUser');
         if (username) {
@@ -40,58 +51,46 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 哈希函数 - 简单加密密码
     function hashPassword(password) {
-        // 这是一个简单的哈希实现，实际应用中应使用更安全的方法
         return password.split('').reduce((acc, char) => {
             let hash = ((acc << 5) - acc) + char.charCodeAt(0);
-            return hash & hash; // 转换为32位整数
+            return hash & hash;
         }, 0).toString();
     }
 
-    // 保存用户数据
     function saveUser(username, passwordHash) {
         const users = JSON.parse(localStorage.getItem('users')) || {};
         users[username] = passwordHash;
         localStorage.setItem('users', JSON.stringify(users));
     }
 
-    // 验证用户密码
     function validateUser(username, password) {
         const users = JSON.parse(localStorage.getItem('users')) || {};
         const storedHash = users[username];
-        if (!storedHash) return null; // 用户不存在
+        if (!storedHash) return null;
         return storedHash === hashPassword(password);
     }
 
     function handleLogin() {
         const username = usernameInput.value.trim();
         const password = passwordInput.value.trim();
-
         if (!username || !password) {
             alert('请输入用户名和密码！');
             return;
         }
-
-        // 验证用户
         const isValid = validateUser(username, password);
-
         if (isValid === true) {
-            // 密码正确，登录
             currentUser = username;
             localStorage.setItem('currentUser', username);
             loadUserView();
         } else if (isValid === null) {
-            // 用户不存在，创建新用户
-            const confirmCreate = confirm('该用户不存在，是否创建新用户？');
-            if (confirmCreate) {
+            if (confirm('该用户不存在，是否创建新用户？')) {
                 saveUser(username, hashPassword(password));
                 currentUser = username;
                 localStorage.setItem('currentUser', username);
                 loadUserView();
             }
         } else {
-            // 密码错误
             alert('密码错误，请重试！');
         }
     }
@@ -117,7 +116,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // --- Todo 逻辑 ---
-
     function loadTodos() {
         const userTodos = localStorage.getItem(`todos_${currentUser}`);
         todos = userTodos ? JSON.parse(userTodos) : [];
@@ -128,29 +126,27 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem(`todos_${currentUser}`, JSON.stringify(todos));
     }
 
-    // 渲染待办事项到页面
     function renderTodos() {
         todoList.innerHTML = '';
         completedList.innerHTML = '';
 
         todos.forEach((todo, index) => {
             const li = document.createElement('li');
-            if (todo.completed) {
-                li.classList.add('completed');
-            }
+            if (todo.completed) li.classList.add('completed');
 
-            // 添加主任务文本
             const textSpan = document.createElement('span');
             textSpan.textContent = todo.text;
             li.appendChild(textSpan);
 
-            // 添加时间信息
+            if (todo.details) {
+                const detailsPreview = document.createElement('div');
+                detailsPreview.className = 'details-preview';
+                detailsPreview.textContent = '详情: ' + todo.details.slice(0, 20) + (todo.details.length > 20 ? '...' : '');
+                li.appendChild(detailsPreview);
+            }
+
             const timeInfo = document.createElement('div');
             timeInfo.className = 'time-info';
-            timeInfo.style.fontSize = '12px';
-            timeInfo.style.color = '#888';
-            timeInfo.style.marginTop = '6px';
-            timeInfo.style.textAlign = 'left';
             const createdStr = `创建: ${formatDateTime(todo.createdAt)}`;
             let completedStr = '';
             if (todo.completed && todo.completedAt) {
@@ -162,14 +158,24 @@ document.addEventListener('DOMContentLoaded', () => {
             const actionsDiv = document.createElement('div');
             actionsDiv.classList.add('actions');
 
-            // 完成/撤销按钮
             const completeBtn = document.createElement('button');
             completeBtn.classList.add('complete-btn');
             completeBtn.innerHTML = todo.completed ? '&#x21A9;' : '&#x2714;';
             completeBtn.title = todo.completed ? '撤销' : '完成';
             completeBtn.onclick = () => toggleTodoStatus(index);
-            
-            // 删除按钮
+
+            const detailBtn = document.createElement('button');
+            detailBtn.classList.add('detail-btn');
+            detailBtn.innerHTML = '&#x1F4DD;';
+            detailBtn.title = '编辑详情';
+            detailBtn.onclick = () => showDetailsModal(index);
+
+            const editBtn = document.createElement('button');
+            editBtn.classList.add('edit-btn');
+            editBtn.innerHTML = '&#x270E;'; // ✏️
+            editBtn.title = '修改任务';
+            editBtn.onclick = () => showEditModal(index);
+
             const deleteBtn = document.createElement('button');
             deleteBtn.classList.add('delete-btn');
             deleteBtn.innerHTML = '&times;';
@@ -177,6 +183,8 @@ document.addEventListener('DOMContentLoaded', () => {
             deleteBtn.onclick = () => deleteTodo(index);
 
             actionsDiv.appendChild(completeBtn);
+            actionsDiv.appendChild(detailBtn);
+            actionsDiv.appendChild(editBtn);
             actionsDiv.appendChild(deleteBtn);
             li.appendChild(actionsDiv);
 
@@ -188,13 +196,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 添加新的待办事项
     function addTodo(event) {
-        event.preventDefault(); // 阻止表单默认的提交行为
+        event.preventDefault();
         const text = todoInput.value.trim();
         if (text) {
             todos.push({
                 text: text,
+                details: '',
                 completed: false,
                 createdAt: new Date().toISOString(),
                 completedAt: null
@@ -205,65 +213,75 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 切换待办事项的状态（完成/待办）
     function toggleTodoStatus(index) {
         const todo = todos[index];
         todo.completed = !todo.completed;
-        if (todo.completed) {
-            todo.completedAt = new Date().toISOString();
-        } else {
-            todo.completedAt = null;
-        }
+        todo.completedAt = todo.completed ? new Date().toISOString() : null;
         saveTodos();
         renderTodos();
     }
 
-    // 删除一个待办事项
     function deleteTodo(index) {
         todos.splice(index, 1);
         saveTodos();
         renderTodos();
     }
 
+    // --- 详情弹窗 ---
+    function showDetailsModal(index) {
+        editingIndex = index;
+        detailTextarea.value = todos[index].details || '';
+        detailModal.style.display = 'flex';
+    }
+
+    function closeDetailsModal() {
+        detailModal.style.display = 'none';
+        editingIndex = null;
+    }
+
+    saveDetailBtn.addEventListener('click', () => {
+        if (editingIndex !== null) {
+            todos[editingIndex].details = detailTextarea.value.trim();
+            saveTodos();
+            renderTodos();
+            closeDetailsModal();
+        }
+    });
+
+    closeDetailBtn.addEventListener('click', closeDetailsModal);
+    detailModal.addEventListener('click', (e) => { if (e.target === detailModal) closeDetailsModal(); });
+
+    // --- 编辑弹窗 ---
+    function showEditModal(index) {
+        editingTitleIndex = index;
+        editInput.value = todos[index].text;
+        editModal.style.display = 'flex';
+    }
+
+    function closeEditModal() {
+        editModal.style.display = 'none';
+        editingTitleIndex = null;
+    }
+
+    saveEditBtn.addEventListener('click', () => {
+        if (editingTitleIndex !== null) {
+            const newText = editInput.value.trim();
+            if (newText) {
+                todos[editingTitleIndex].text = newText;
+                saveTodos();
+                renderTodos();
+                closeEditModal();
+            }
+        }
+    });
+
+    closeEditBtn.addEventListener('click', closeEditModal);
+    editModal.addEventListener('click', (e) => { if (e.target === editModal) closeEditModal(); });
+
     // --- 事件监听 ---
     loginBtn.addEventListener('click', handleLogin);
     logoutBtn.addEventListener('click', handleLogout);
     addTodoForm.addEventListener('submit', addTodo);
 
-    // --- 初始化 ---
     checkLoginStatus();
-
-    // 显示所有用户列表
-    function showAllUsers() {
-        // 只有在登录界面才显示用户列表
-        if (loginView.style.display !== 'block') {
-            alert('请先返回到登录界面，再使用alt+F9查看用户列表');
-            return;
-        }
-
-        const users = JSON.parse(localStorage.getItem('users')) || {};
-        const userList = Object.keys(users);
-
-        if (userList.length === 0) {
-            alert('暂无用户数据');
-            return;
-        }
-
-        let userListStr = '已注册用户列表：\n';
-        userList.forEach((username, index) => {
-            userListStr += `${index + 1}. ${username}\n`;
-        });
-
-        alert(userListStr);
-    }
-
-    // 添加快捷键事件监听
-    document.addEventListener('keydown', (event) => {
-        // 检查是否同时按下了alt和F9
-        if (event.altKey && event.key === 'F9') {
-            event.preventDefault(); // 阻止默认行为
-            showAllUsers();
-        }
-    });
 });
-
