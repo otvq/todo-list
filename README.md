@@ -4,7 +4,7 @@
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 
-**[查看在线演示 &raquo;](https://[你的GitHub用户名].github.io/[你的仓库名]/)**
+**[查看在线演示 &raquo;](https://otvq.github.io/todo-list/)**
 
 *（请将上面的链接替换为你自己的 GitHub Pages 链接）*
 
