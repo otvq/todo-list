@@ -16,17 +16,12 @@
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    
-    /* --- 新增：背景图片设置 --- */
     background-image: url('background-image.jpg');
-    background-size: cover; /* 让图片完全覆盖整个背景区域，可能会裁剪图片 */
-    background-position: center center; /* 将图片在视口中居中 */
-    background-repeat: no-repeat; /* 防止图片平铺重复 */
-    background-attachment: fixed; /* 这是关键，使背景图片固定，内容滚动时背景不动 */
-    
-    /* --- 保留一个备用背景色，以防图片加载失败 --- */
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     background-color: var(--background-light);
-    
     margin: 0;
     padding: 40px 20px;
     display: flex;
@@ -36,199 +31,97 @@ body {
     color: var(--text-dark);
 }
 
-/* --- 主容器卡片样式 (磨砂玻璃效果) --- */
+/* --- 主容器 --- */
 .container {
-    /* 使用带透明度的白色作为背景 */
-    background-color: rgba(255, 255, 255, 0.85); 
-    
-    /* 关键：添加背景模糊滤镜，实现磨砂效果 */
+    background-color: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px); /* 兼容 Safari */
-
+    -webkit-backdrop-filter: blur(10px);
     padding: 40px;
-    border-radius: 16px; /* 可以让圆角更明显一些 */
+    border-radius: 16px;
     box-shadow: var(--shadow-md);
     width: 100%;
     max-width: 650px;
     text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.4); /* 使用半透明边框 */
+    border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
-/* --- 标题和头部 --- */
-h1 {
-    font-weight: 700;
-    font-size: 28px;
-    margin-bottom: 10px;
-}
+h1 { font-weight: 700; font-size: 28px; margin-bottom: 10px; }
+h2 { font-size: 20px; font-weight: 500; color: var(--text-dark); text-align: left; margin: 40px 0 15px 0; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); }
+p { color: var(--text-light); margin-bottom: 30px; }
 
-h2 {
-    font-size: 20px;
-    font-weight: 500;
-    color: var(--text-dark);
-    text-align: left;
-    margin: 40px 0 15px 0;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--border-color);
-}
+header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+header h1 { margin: 0; font-size: 24px; }
 
-p {
-    color: var(--text-light);
-    margin-bottom: 30px;
-}
-
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-}
-
-header h1 {
-    margin: 0;
-    font-size: 24px;
-}
-
-/* --- 表单元素（输入框和按钮） --- */
 input[type="text"], input[type="password"] {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    font-size: 16px;
-    background-color: #fafbfc;
-    transition: border-color 0.3s, box-shadow 0.3s;
-    margin-bottom: 15px;
+    width: 100%; padding: 12px 15px; border: 1px solid var(--border-color); border-radius: 6px;
+    font-size: 16px; background-color: #fafbfc; transition: border-color 0.3s, box-shadow 0.3s; margin-bottom: 15px;
 }
+input[type="text"]:focus { outline: none; border-color: var(--primary-blue); box-shadow: 0 0 0 3px rgba(56, 126, 209, 0.2); }
 
-input[type="text"]:focus {
-    outline: none;
-    border-color: var(--primary-blue);
-    box-shadow: 0 0 0 3px rgba(56, 126, 209, 0.2);
-}
-
-form {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-form input {
-    flex-grow: 1;
-}
+form { display: flex; gap: 10px; margin-bottom: 20px; }
+form input { flex-grow: 1; }
 
 button {
-    background-color: var(--primary-blue);
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 500;
+    background-color: var(--primary-blue); color: white; border: none;
+    padding: 12px 20px; border-radius: 6px; cursor: pointer;
+    font-size: 16px; font-weight: 500;
     transition: background-color 0.3s, transform 0.2s;
 }
+button:hover { background-color: var(--primary-blue-darker); transform: translateY(-1px); }
 
-button:hover {
-    background-color: var(--primary-blue-darker);
-    transform: translateY(-1px);
-}
+#logout-btn { background: none; color: var(--text-light); padding: 5px; font-weight: normal; }
+#logout-btn:hover { background: none; color: var(--danger-red); transform: none; }
 
-#logout-btn {
-    background: none;
-    color: var(--text-light);
-    padding: 5px;
-    font-weight: normal;
-}
-
-#logout-btn:hover {
-    background: none;
-    color: var(--danger-red);
-    transform: none;
-}
-
-
-/* --- 任务列表样式 --- */
-.lists-container {
-    text-align: left;
-}
-
-ul {
-    list-style-type: none;
-    padding: 0;
-}
+/* --- 任务列表 --- */
+.lists-container { text-align: left; }
+ul { list-style-type: none; padding: 0; }
 
 li {
     background-color: var(--background-white);
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    word-break: break-all;
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow-sm);
+    padding: 15px; border-radius: 8px; margin-bottom: 12px;
+    display: flex; flex-direction: column; align-items: flex-start;
+    border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);
     transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s;
 }
+li:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: #c8d4e1; }
+li.completed { opacity: 0.6; }
+li.completed span { text-decoration: line-through; color: var(--text-light); }
 
-li:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-    border-color: #c8d4e1;
-}
-
-li.completed {
-    opacity: 0.6;
-}
-
-li.completed span {
-    text-decoration: line-through;
-    color: var(--text-light);
-}
-
-/* --- 任务内的操作按钮 --- */
 li .actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-left: 15px; /* 与文字隔开 */
+    display: flex; gap: 8px; margin-top: 8px; align-self: flex-end;
 }
-
 li .actions button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 20px;
-    padding: 5px;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: none; border: none; cursor: pointer;
+    font-size: 20px; padding: 5px; border-radius: 50%;
+    width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
     transition: background-color 0.2s;
 }
-li .actions button:hover {
-    background-color: #f0f2f5;
-    transform: none;
-}
+li .actions button:hover { background-color: #f0f2f5; }
+li .actions .complete-btn { color: var(--success-green); }
+li.completed .actions .complete-btn { color: var(--warning-orange); }
+li .actions .delete-btn { color: var(--danger-red); }
+li .actions .detail-btn { color: var(--primary-blue); }
 
-li .actions .complete-btn {
-    color: var(--success-green);
-}
+li .time-info { font-size: 12px; color: #888; margin-top: 6px; text-align: left; }
+.details-preview { font-size: 13px; color: var(--text-light); margin-top: 6px; }
 
-li.completed .actions .complete-btn {
-    color: var(--warning-orange);
+/* --- 弹窗 --- */
+.modal {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 999;
 }
-
-li .actions .delete-btn {
-    color: var(--danger-red);
+.modal-content {
+    background: white; padding: 20px; border-radius: 12px; width: 400px;
+    box-shadow: var(--shadow-md);
 }
+.modal-content textarea {
+    width: 100%; height: 120px; padding: 10px; margin-bottom: 15px;
+    border: 1px solid var(--border-color); border-radius: 6px; font-size: 14px;
+}
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
 
-li .time-info {
-    display: block;
-    font-size: 12px;
-    color: #888;
-    margin-top: 6px;
-    text-align: left;
+li .actions .edit-btn {
+    color: var(--primary-blue-darker);
 }
