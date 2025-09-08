@@ -105,6 +105,20 @@ li .actions .detail-btn { color: var(--primary-blue); }
 li .time-info { font-size: 12px; color: #888; margin-top: 6px; text-align: left; }
 .details-preview { font-size: 13px; color: var(--text-light); margin-top: 6px; }
 
+/*
+ * 导师提示：这是为每周分组添加的标题样式。
+ */
+.week-header {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-dark);
+    text-align: left;
+    margin: 40px 0 15px 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+
 /* --- 弹窗 --- */
 .modal {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
